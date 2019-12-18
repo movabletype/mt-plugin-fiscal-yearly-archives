@@ -1,0 +1,15 @@
+id: FiscalYearlyArchives
+name: FiscalYearlyArchives
+version: 0.20
+author_link: http://www.movabletype.org/
+author_name: Six Apart Ltd.
+description: <MT_TRANS phrase="The fiscal yearly archive is added. Starting month can be specificated every site. Default starting month is April.">
+l10n_class: FiscalYearlyArchives::L10N
+blog_config_template: cfg_fiscal_yearly_archives.tmpl
+settings:
+    starting_month:
+        default: 04
+
+archive_types:
+    Fiscal-Yearly: FiscalYearlyArchives::FiscalYearly
+    ContentType-Fiscal-Yearly: FiscalYearlyArchives::ContentTypeFiscalYearly

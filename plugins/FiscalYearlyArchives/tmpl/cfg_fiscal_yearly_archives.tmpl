@@ -1,0 +1,22 @@
+<p><__trans phrase="Please enter starting month for the fiscal yearly archive."></p>
+
+<mtapp:setting
+   id="flexible-yearly-starting-month"
+   label="<__trans phrase="Starting Month">">
+      <div class="form-inline group-container">
+        <select name="starting_month" class="custom-select form-control" value="<mt:var name="starting_month">" />
+          <option value="01"<mt:if name="starting_month" eq="01"> selected="selected"</mt:if>><__trans phrase="January"></option>
+          <option value="02"<mt:if name="starting_month" eq="02"> selected="selected"</mt:if>><__trans phrase="February"></option>
+          <option value="03"<mt:if name="starting_month" eq="03"> selected="selected"</mt:if>><__trans phrase="March"></option>
+          <option value="04"<mt:if name="starting_month" eq="04"> selected="selected"</mt:if>><__trans phrase="April"></option>
+          <option value="05"<mt:if name="starting_month" eq="05"> selected="selected"</mt:if>><__trans phrase="May"></option>
+          <option value="06"<mt:if name="starting_month" eq="06"> selected="selected"</mt:if>><__trans phrase="June"></option>
+          <option value="07"<mt:if name="starting_month" eq="07"> selected="selected"</mt:if>><__trans phrase="July"></option>
+          <option value="08"<mt:if name="starting_month" eq="08"> selected="selected"</mt:if>><__trans phrase="August"></option>
+          <option value="09"<mt:if name="starting_month" eq="09"> selected="selected"</mt:if>><__trans phrase="September"></option>
+          <option value="10"<mt:if name="starting_month" eq="10"> selected="selected"</mt:if>><__trans phrase="October"></option>
+          <option value="11"<mt:if name="starting_month" eq="11"> selected="selected"</mt:if>><__trans phrase="November"></option>
+          <option value="12"<mt:if name="starting_month" eq="12"> selected="selected"</mt:if>><__trans phrase="December"></option>
+        </select>
+      </div>
+</mtapp:setting>
