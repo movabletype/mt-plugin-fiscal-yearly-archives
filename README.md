@@ -12,7 +12,7 @@ The contents are put to the plugins directory of Movable Type.
 
 ## License
 
-This library is free software released under the MIT. Please see LICENSE.txt
+This library is free software released under the MIT. Please see LICENSE
  
 ## ToDo
 
