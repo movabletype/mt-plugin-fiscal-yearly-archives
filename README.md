@@ -1,4 +1,4 @@
-# Fiscal Yearly Archive
+# Fiscal Yearly Archives
 
 The fiscal yearly archive is added. Starting month can be specificated every site. Default starting month is April.
 
