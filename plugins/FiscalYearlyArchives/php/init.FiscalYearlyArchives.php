@@ -262,6 +262,7 @@ function start_end_fiscal_year($ts) {
     $config = $ctx->mt->db()->fetch_plugin_data('FiscalYearlyArchives', "configuration:blog:$blog_id");
 
     $start_mo = intval($config['starting_month']);
+    if ( $start_mo === 0 ) $start_mo = 4;
 
     $start_y = $mo && $mo < $start_mo ? $y - 1 : $y;
     $end_y = $start_mo === 1 ? $y : $y + 1;
