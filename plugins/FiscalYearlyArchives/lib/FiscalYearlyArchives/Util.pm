@@ -20,7 +20,7 @@ sub start_end_fiscal_year {
 
     my $app    = MT->instance;
     my $plugin = MT->component("FiscalYearlyArchives");
-    my $config = $plugin->get_config_hash( 'blog:' . $app->blog->id );
+    my $config = $plugin->get_config_hash('system');
 
     my $starting_month = $config->{starting_month};
 
