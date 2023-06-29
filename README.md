@@ -1,6 +1,6 @@
 # Fiscal Yearly Archives
 
-The fiscal yearly archive is added. Starting month can be specificated every site. Default starting month is April.
+The fiscal yearly archive is added. Starting month can be specificated. Default starting month is April.
 
 ## Requirements
 
