@@ -30,24 +30,29 @@ sub dynamic_template {
 
 sub default_archive_templates {
     my $plugin = MT->component("FiscalYearlyArchives");
-    return [
-        {   label    => $plugin->translate('fy/yyyy/index.html'),
+    return [{
+            label    => $plugin->translate('fy/yyyy/index.html'),
             template => 'fy/%y/%i',
             default  => 1
         },
-        {   label    => $plugin->translate('fy-yyyy/index.html'),
+        {
+            label    => $plugin->translate('fy-yyyy/index.html'),
             template => 'fy-%y/%i',
         },
-        {   label    => $plugin->translate('fy_yyyy/index.html'),
+        {
+            label    => $plugin->translate('fy_yyyy/index.html'),
             template => 'fy_%y/%i',
         },
-        {   label    => $plugin->translate('fy/yyyy.html'),
+        {
+            label    => $plugin->translate('fy/yyyy.html'),
             template => 'fy/%y.html',
         },
-        {   label    => $plugin->translate('fy-yyyy.html'),
+        {
+            label    => $plugin->translate('fy-yyyy.html'),
             template => 'fy-%y.html',
         },
-        {   label    => $plugin->translate('fy_yyyy.html'),
+        {
+            label    => $plugin->translate('fy_yyyy.html'),
             template => 'fy_%y.html',
         },
     ];
@@ -67,20 +72,18 @@ sub template_params {
 
 sub archive_file {
     my $obj = shift;
-    my ( $ctx, %param ) = @_;
+    my ($ctx, %param) = @_;
     my $timestamp = $param{Timestamp};
     my $file_tmpl = $param{Template};
     my $blog      = $ctx->{__stash}{blog};
 
     my $file;
     if ($file_tmpl) {
-        ( $ctx->{current_timestamp}, $ctx->{current_timestamp_end} )
-            = start_end_fiscal_year( $timestamp, $blog );
-    }
-    else {
-        my $start = start_end_fiscal_year( $timestamp, $blog );
+        ($ctx->{current_timestamp}, $ctx->{current_timestamp_end}) = start_end_fiscal_year($timestamp, $blog);
+    } else {
+        my $start  = start_end_fiscal_year($timestamp, $blog);
         my ($year) = unpack 'A4', $start;
-        $file = sprintf( "fy/%04d/index", $year );
+        $file = sprintf("fy/%04d/index", $year);
     }
 
     $file;
@@ -88,18 +91,20 @@ sub archive_file {
 
 sub archive_title {
     my $obj = shift;
-    my ( $ctx, $entry_or_ts ) = @_;
+    my ($ctx, $entry_or_ts) = @_;
     my $stamp = ref $entry_or_ts ? $entry_or_ts->authored_on : $entry_or_ts;
-    my $start = start_end_fiscal_year( $stamp, $ctx->stash('blog') );
+    my $start = start_end_fiscal_year($stamp, $ctx->stash('blog'));
     require MT::Template::Context;
-    my $year = MT::Template::Context::_hdlr_date( $ctx,
-        { ts => $start, 'format' => "%Y" } );
+    my $year = MT::Template::Context::_hdlr_date(
+        $ctx,
+        { ts => $start, 'format' => "%Y" });
     my $lang = lc MT->current_language || 'en_us';
     $lang = 'ja' if lc($lang) eq 'jp';
 
-    sprintf( "%s%s%s",
-        ( $lang ne 'ja' ? 'FY' : '' ),
-        $year, ( $lang eq 'ja' ? '&#24180;&#24230;' : '' ) );
+    sprintf(
+        "%s%s%s",
+        ($lang ne 'ja' ? 'FY' : ''),
+        $year, ($lang eq 'ja' ? '&#24180;&#24230;' : ''));
 }
 
 sub date_range {
@@ -109,47 +114,46 @@ sub date_range {
 
 sub archive_group_iter {
     my $obj = shift;
-    my ( $ctx, $args ) = @_;
+    my ($ctx, $args) = @_;
     my $blog = $ctx->stash('blog');
     my $iter;
-    my $sort_order
-        = ( $args->{sort_order} || '' ) eq 'ascend' ? 'ascend' : 'descend';
-    my $order = ( $sort_order eq 'ascend' ) ? 'asc' : 'desc';
+    my $sort_order = ($args->{sort_order} || '') eq 'ascend' ? 'ascend' : 'descend';
+    my $order      = ($sort_order eq 'ascend')               ? 'asc'    : 'desc';
 
     my $ts    = $ctx->{current_timestamp};
     my $tsend = $ctx->{current_timestamp_end};
 
     require MT::Entry;
-    $iter = MT::Entry->count_group_by(
-        {   blog_id => $blog->id,
+    $iter = MT::Entry->count_group_by({
+            blog_id => $blog->id,
             status  => MT::Entry::RELEASE(),
-            ( $ts && $tsend ? ( authored_on => [ $ts, $tsend ] ) : () ),
+            ($ts && $tsend ? (authored_on => [$ts, $tsend]) : ()),
         },
-        {   ( $ts && $tsend ? ( range_incl => { authored_on => 1 } ) : () ),
+        {
+            ($ts && $tsend ? (range_incl => { authored_on => 1 }) : ()),
             group => [
                 "extract(year from authored_on) AS year",
                 "extract(month from authored_on) AS month"
             ],
-            sort => [
-                {   column => "extract(year from authored_on)",
+            sort => [{
+                    column => "extract(year from authored_on)",
                     desc   => $order
                 },
-                {   column => "extract(month from authored_on)",
+                {
+                    column => "extract(month from authored_on)",
                     desc   => $order
                 }
             ],
-        }
-    ) or return $ctx->error("Couldn't get fiscal yearly archive list");
+        }) or return $ctx->error("Couldn't get fiscal yearly archive list");
 
     my %counts;
-    while ( my @row = $iter->() ) {
-        my $date = sprintf( "%04d%02d%02d000000", $row[1], $row[2], 1 );
-        my ( $start, $end ) = start_end_fiscal_year($date);
-        my $fiscal_year = substr( $start, 0, 4 );
-        if ( $counts{$fiscal_year} ) {
+    while (my @row = $iter->()) {
+        my $date = sprintf("%04d%02d%02d000000", $row[1], $row[2], 1);
+        my ($start, $end) = start_end_fiscal_year($date);
+        my $fiscal_year = substr($start, 0, 4);
+        if ($counts{$fiscal_year}) {
             $counts{$fiscal_year}{count} += $row[0];
-        }
-        else {
+        } else {
             $counts{$fiscal_year} = {
                 count => $row[0],
                 start => $start,
@@ -157,29 +161,27 @@ sub archive_group_iter {
             };
         }
     }
-    my @rows = map {
-        {   count => $counts{$_}{count},
-            year  => $counts{$_},
-            start => $counts{$_}{start},
-            end   => $counts{$_}{end}
-        }
-        } ( $args->{sort_order} || '' ) eq 'ascend'
+    my @rows = map { {
+        count => $counts{$_}{count},
+        year  => $counts{$_},
+        start => $counts{$_}{start},
+        end   => $counts{$_}{end}
+    } } ($args->{sort_order} || '') eq 'ascend'
         ? sort keys %counts
         : reverse sort keys %counts;
 
-    my @limited_rows
-        = $args->{lastn}
+    my @limited_rows =
+        $args->{lastn}
         ? splice @rows, 0, $args->{lastn}
         : @rows;
 
     return sub {
-        while ( my $row = shift(@limited_rows) ) {
+        while (my $row = shift(@limited_rows)) {
             return (
                 $row->{count},
                 year  => $row->{year},
                 start => $row->{start},
-                end   => $row->{end}
-            );
+                end   => $row->{end});
         }
         undef;
     };
@@ -187,13 +189,13 @@ sub archive_group_iter {
 
 sub archive_group_entries {
     my $obj = shift;
-    my ( $ctx, %param ) = @_;
-    my $ts
-        = $param{year}
-        ? sprintf( "%04d%02d%02d000000", $param{year}, 1, 1 )
+    my ($ctx, %param) = @_;
+    my $ts =
+        $param{year}
+        ? sprintf("%04d%02d%02d000000", $param{year}, 1, 1)
         : undef;
     my $limit = $param{limit};
-    $obj->dated_group_entries( $ctx, 'FiscalYearly', $ts, $limit );
+    $obj->dated_group_entries($ctx, 'FiscalYearly', $ts, $limit);
 }
 
 1;
