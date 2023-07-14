@@ -16,11 +16,11 @@ our @EXPORT_OK = qw( start_end_fiscal_year );
 
 sub start_end_fiscal_year {
     my $ts = shift;
-    my ( $y, $m ) = unpack 'A4A2', $ts;
+    my ($y, $m) = unpack 'A4A2', $ts;
 
     my $app    = MT->instance;
     my $plugin = MT->component("FiscalYearlyArchives");
-    my $config = $plugin->get_config_hash( 'blog:' . $app->blog->id );
+    my $config = $plugin->get_config_hash('blog:' . $app->blog->id);
 
     my $starting_month = $config->{starting_month};
 
@@ -29,12 +29,12 @@ sub start_end_fiscal_year {
     my $start = sprintf "%04d%02d01000000", $y, $starting_month;
     return $start unless wantarray;
 
-    my $timelocal = timelocal( 0, 0, 0, 1, $starting_month - 1, $y - 1900 );
+    my $timelocal = timelocal(0, 0, 0, 1, $starting_month - 1, $y - 1900);
     my $endofyear = $timelocal + 365 * 24 * 3600;
-    my ( $day, $month, $year ) = ( localtime($endofyear) )[ 3 .. 5 ];
+    my ($day, $month, $year) = (localtime($endofyear))[3 .. 5];
     my $end = sprintf "%04d%02d%02d235959", $year + 1900, $month + 1, $day;
 
-    ( $start, $end );
+    ($start, $end);
 }
 
 1;
