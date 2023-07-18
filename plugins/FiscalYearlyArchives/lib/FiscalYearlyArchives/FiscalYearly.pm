@@ -149,7 +149,7 @@ sub archive_group_iter {
     my %counts;
     while (my @row = $iter->()) {
         my $date = sprintf("%04d%02d%02d000000", $row[1], $row[2], 1);
-        my ($start, $end) = start_end_fiscal_year($date);
+        my ($start, $end) = start_end_fiscal_year($date, $blog);
         my $fiscal_year = substr($start, 0, 4);
         if ($counts{$fiscal_year}) {
             $counts{$fiscal_year}{count} += $row[0];

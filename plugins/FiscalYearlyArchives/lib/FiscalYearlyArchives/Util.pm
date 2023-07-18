@@ -15,12 +15,12 @@ use Time::Local;
 our @EXPORT_OK = qw( start_end_fiscal_year );
 
 sub start_end_fiscal_year {
-    my $ts = shift;
+    my ($ts, $blog) = @_;
     my ($y, $m) = unpack 'A4A2', $ts;
 
     my $app    = MT->instance;
     my $plugin = MT->component("FiscalYearlyArchives");
-    my $config = $plugin->get_config_hash('blog:' . $app->blog->id);
+    my $config = $plugin->get_config_hash('blog:' . $blog->id);
 
     my $starting_month = $config->{starting_month};
 
