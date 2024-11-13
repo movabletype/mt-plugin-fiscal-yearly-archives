@@ -30,11 +30,16 @@ sub start_end_fiscal_year {
     return $start unless wantarray;
 
     my $timelocal = timelocal(0, 0, 0, 1, $starting_month - 1, $y - 1900);
-    my $endofyear = $timelocal + 365 * 24 * 3600;
+    my $calc_days = ($starting_month <= 2 && is_leap_year($y)) || ($starting_month > 2 && is_leap_year($y + 1)) ? 365 : 364;
+    my $endofyear = $timelocal + $calc_days * 24 * 3600;
     my ($day, $month, $year) = (localtime($endofyear))[3 .. 5];
     my $end = sprintf "%04d%02d%02d235959", $year + 1900, $month + 1, $day;
 
     ($start, $end);
+}
+
+sub is_leap_year {
+    ( !( $_[0] % 4 ) && ( $_[0] % 100 ) ) || !( $_[0] % 400 );
 }
 
 1;

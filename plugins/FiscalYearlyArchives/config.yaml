@@ -13,3 +13,7 @@ settings:
 archive_types:
     Fiscal-Yearly: FiscalYearlyArchives::FiscalYearly
     ContentType-Fiscal-Yearly: FiscalYearlyArchives::ContentTypeFiscalYearly
+    Author-Fiscal-Yearly: FiscalYearlyArchives::AuthorFiscalYearly
+    ContentType-Author-Fiscal-Yearly: FiscalYearlyArchives::ContentTypeAuthorFiscalYearly
+    Category-Fiscal-Yearly: FiscalYearlyArchives::CategoryFiscalYearly
+    ContentType-Category-Fiscal-Yearly: FiscalYearlyArchives::ContentTypeCategoryFiscalYearly

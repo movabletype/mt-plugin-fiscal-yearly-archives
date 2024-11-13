@@ -33,40 +33,45 @@ sub default_archive_templates {
     return [{
             label    => $plugin->translate('fy/yyyy/index.html'),
             template => 'fy/%y/%i',
+            required_fields => { date_and_time => 1 },
             default  => 1
         },
         {
             label    => $plugin->translate('fy-yyyy/index.html'),
             template => 'fy-%y/%i',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy_yyyy/index.html'),
             template => 'fy_%y/%i',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy/yyyy.html'),
             template => 'fy/%y.html',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy-yyyy.html'),
             template => 'fy-%y.html',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy_yyyy.html'),
             template => 'fy_%y.html',
+            required_fields => { date_and_time => 1 }
         },
     ];
 }
 
 sub template_params {
     return {
-        datebased_only_archive   => 1,
-        datebased_yearly_archive => 1,
-        module_yearly_archives   => 1,
-        archive_template         => 1,
-        archive_listing          => 1,
-        archive_class            => "fiscal-yearly-archive",
-        datebased_archive        => 1,
+        datebased_only_archive          => 1,
+        datebased_fiscal_yearly_archive => 1,
+        archive_template                => 1,
+        archive_listing                 => 1,
+        archive_class                   => "fiscal-yearly-archive",
+        datebased_archive               => 1,
     };
 }
 

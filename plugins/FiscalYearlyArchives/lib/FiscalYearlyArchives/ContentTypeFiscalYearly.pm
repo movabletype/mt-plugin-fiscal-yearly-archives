@@ -39,41 +39,46 @@ sub default_archive_templates {
     return [{
             label    => $plugin->translate('fy/yyyy/index.html'),
             template => 'fy/%y/%i',
+            required_fields => { date_and_time => 1 },
             default  => 1
         },
         {
             label    => $plugin->translate('fy-yyyy/index.html'),
             template => 'fy-%y/%i',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy_yyyy/index.html'),
             template => 'fy_%y/%i',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy/yyyy.html'),
             template => 'fy/%y.html',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy-yyyy.html'),
             template => 'fy-%y.html',
+            required_fields => { date_and_time => 1 }
         },
         {
             label    => $plugin->translate('fy_yyyy.html'),
             template => 'fy_%y.html',
+            required_fields => { date_and_time => 1 }
         },
     ];
 }
 
 sub template_params {
     return {
-        archive_class               => "contenttype-fiscal-yearly-archive",
-        datebased_yearly_archive    => 1,
-        module_yearly_archives      => 1,
-        archive_template            => 1,
-        archive_listing             => 1,
-        datebased_archive           => 1,
-        datebased_only_archive      => 1,
-        contenttype_archive_listing => 1,
+        archive_class                   => "contenttype-fiscal-yearly-archive",
+        datebased_fiscal_yearly_archive => 1,
+        archive_template                => 1,
+        archive_listing                 => 1,
+        datebased_archive               => 1,
+        datebased_only_archive          => 1,
+        contenttype_archive_listing     => 1,
     };
 }
 
@@ -89,7 +94,7 @@ sub archive_group_iter {
     my $tsend = $ctx->{current_timestamp_end};
 
     my $content_type_id = $ctx->stash('content_type')->id;
-    my $map             = $obj->_get_preferred_map({
+    my $map             = $obj->get_preferred_map({
         blog_id         => $blog->id,
         content_type_id => $content_type_id,
         map             => $ctx->stash('template_map'),
