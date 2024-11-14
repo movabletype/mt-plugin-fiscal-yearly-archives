@@ -1,5 +1,5 @@
 <?php
-# Movable Type (r) (C) 2001-2020 Six Apart Ltd. All Rights Reserved.
+# Movable Type (r) (C) Six Apart Ltd. All Rights Reserved.
 # This code cannot be redistributed without permission from www.sixapart.com.
 # For more information, consult your Movable Type license.
 #
@@ -20,6 +20,9 @@ class FiscalYearlyArchiver extends DateBasedArchiver {
         $blog = $ctx->stash('blog');
         $lang = ($blog && $blog->blog_language ? $blog->blog_language :
             $mt->config('DefaultLanguage'));
+        if (strtolower($lang) == 'en-us' || strtolower($lang) == 'en_us') {
+            $lang = 'en';
+        }
         require_once("l10n_$lang.php");
         return $mt->translate('FISCAL-YEARLY_ADV');
     }
@@ -137,6 +140,9 @@ class ContentTypeFiscalYearlyArchiver extends ContentTypeDateBasedArchiver {
         $blog = $ctx->stash('blog');
         $lang = ($blog && $blog->blog_language ? $blog->blog_language :
             $mt->config('DefaultLanguage'));
+        if (strtolower($lang) == 'en-us' || strtolower($lang) == 'en_us') {
+            $lang = 'en';
+        }
         require_once("l10n_$lang.php");
         return $mt->translate('CONTENTTYPE-FISCAL-YEARLY_ADV');
     }
