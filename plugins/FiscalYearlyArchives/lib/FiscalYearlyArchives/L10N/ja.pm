@@ -16,7 +16,7 @@ use vars qw( @ISA %Lexicon );
 %Lexicon = (
     'FISCAL-YEARLY_ADV' => '年度別',
     'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'コンテンツタイプ 年度別',
-    'The fiscal yearly archive is added. Starting month can be specificated every site. Default starting month is April.' => '年度別アーカイブを追加します。開始月はサイトごとに指定できます。デフォルトの開始月は4月です。',
+    'The fiscal yearly archive is added. Default starting month is April.' => '年度別アーカイブを追加します。デフォルトの開始月は4月です。',
     'Please enter starting month for the fiscal yearly archive.' => '年度別アーカイブの開始月を入力してください。',
     'Starting Month' => '開始月',
     'January' => '1月',
