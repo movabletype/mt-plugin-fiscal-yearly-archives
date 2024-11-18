@@ -17,13 +17,7 @@ class FiscalYearlyArchiver extends DateBasedArchiver {
     public function get_label($args = null) {
         $mt = MT::get_instance();
         $ctx =& $mt->context();
-        $blog = $ctx->stash('blog');
-        $lang = ($blog && $blog->blog_language ? $blog->blog_language :
-            $mt->config('DefaultLanguage'));
-        if (strtolower($lang) == 'en-us' || strtolower($lang) == 'en_us') {
-            $lang = 'en';
-        }
-        require_once("l10n_$lang.php");
+        require_l10n();
         return $mt->translate('FISCAL-YEARLY_ADV');
     }
 
@@ -33,14 +27,8 @@ class FiscalYearlyArchiver extends DateBasedArchiver {
         $stamp = $ctx->stash('current_timestamp');
         list($start) = start_end_fiscal_year($stamp, $ctx->stash('blog'));
         $format = $args['format'];
-        $blog = $ctx->stash('blog');
-        $lang = ($blog && $blog->blog_language ? $blog->blog_language :
-            $mt->config('DefaultLanguage'));
-        if (strtolower($lang) == 'jp' || strtolower($lang) == 'ja') {
-            $format or $format = "%Y&#24180;&#24230;";
-        } else {
-            $format or $format = "FY%Y";
-        }
+        require_l10n();
+        $format or $format = $mt->translate("FISCAL_YEARLY_ARCHIVE_TITLE", "%Y");
 
         return $ctx->_hdlr_date(array('ts' => $start, 'format' => $format), $ctx);
     }
@@ -137,30 +125,18 @@ class ContentTypeFiscalYearlyArchiver extends ContentTypeDateBasedArchiver {
     public function get_label($args = null) {
         $mt = MT::get_instance();
         $ctx =& $mt->context();
-        $blog = $ctx->stash('blog');
-        $lang = ($blog && $blog->blog_language ? $blog->blog_language :
-            $mt->config('DefaultLanguage'));
-        if (strtolower($lang) == 'en-us' || strtolower($lang) == 'en_us') {
-            $lang = 'en';
-        }
-        require_once("l10n_$lang.php");
+        require_l10n();
         return $mt->translate('CONTENTTYPE-FISCAL-YEARLY_ADV');
     }
     
     public function get_title($args) {
         $mt = MT::get_instance();
         $ctx =& $mt->context();
-        $stamp = $ctx->stash('current_timestamp'); #$entry['entry_authored_on'];
+        $stamp = $ctx->stash('current_timestamp');
         list($start) = start_end_fiscal_year($stamp, $ctx->stash('blog'));
         $format = $args['format'];
-        $blog = $ctx->stash('blog');
-        $lang = ($blog && $blog->blog_language ? $blog->blog_language :
-            $mt->config('DefaultLanguage'));
-            if (strtolower($lang) == 'jp' || strtolower($lang) == 'ja') {
-            $format or $format = "%Y&#24180;&#24230;";
-        } else {
-            $format or $format = "FY%Y";
-        }
+        require_l10n();
+        $format or $format = $mt->translate("FISCAL_YEARLY_ARCHIVE_TITLE", "%Y");
 
         return $ctx->_hdlr_date(array('ts' => $start, 'format' => $format), $ctx);
     }
@@ -280,4 +256,15 @@ function start_end_fiscal_year($ts) {
     return array($start, $end);
 }
 
+function require_l10n() {
+    $mt = MT::get_instance();
+    $ctx =& $mt->context();
+    $blog = $ctx->stash('blog');
+    $lang = ($blog && $blog->blog_language ? $blog->blog_language :
+        $mt->config('DefaultLanguage'));
+    if (strtolower($lang) == 'en-us' || strtolower($lang) == 'en_us') {
+        $lang = 'en';
+    }
+    require_once("l10n_$lang.php");
+}
 ?>

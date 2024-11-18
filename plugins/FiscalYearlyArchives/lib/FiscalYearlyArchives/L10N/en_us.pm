@@ -15,6 +15,7 @@ use vars qw( @ISA %Lexicon );
 %Lexicon = (
     'FISCAL-YEARLY_ADV' => 'Fiscal Yearly',
     'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'ContentType Fiscal Yearly',
+    'FISCAL_YEARLY_ARCHIVE_TITLE' => 'FY[_1]',
 );
 
 1;

@@ -7,8 +7,9 @@
 
 global $Lexicon;
 $Lexicon = array(
-    'FISCAL-YEARLY_ADV' => 'Ficcal Yearly',
-    'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'ContentType Ficcal Yearly',
+    'FISCAL-YEARLY_ADV' => 'Fiscal Yearly',
+    'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'ContentType Fiscal Yearly',
+    'FISCAL_YEARLY_ARCHIVE_TITLE' => 'FY[_1]',
 );
 
 ?>
