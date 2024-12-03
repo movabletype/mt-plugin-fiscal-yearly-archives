@@ -70,42 +70,38 @@ class FiscalYearlyArchiver extends DateBasedArchiver {
     protected function get_archive_list_data($args) {
         $mt = MT::get_instance();
 
-        $blog_id = $args['blog_id'];
-        $at = $args['archive_type'];
-        $order = $args['sort_order'] == 'ascend' ? 'asc' : 'desc';
+        $at    = $args['archive_type'];
+        $order = !empty($args['sort_order']) && $args['sort_order'] == 'ascend' ? 'asc' : 'desc';
 
-        $year_ext = $mt->db()->apply_extract_date('year', 'entry_authored_on');
+        $year_ext  = $mt->db()->apply_extract_date('year',  'entry_authored_on');
         $month_ext = $mt->db()->apply_extract_date('month', 'entry_authored_on');
-        
-        $sql = "
-                select count(*) as entry_count,
-                       $year_ext as y,
-                       $month_ext as m
-                  from mt_entry
-                 where entry_blog_id = $blog_id
-                   and entry_status = 2
-                   and entry_class = 'entry'
-                   $date_filter
-                 group by
-                       $year_ext,
-                       $month_ext
-                 order by
-                       $year_ext $order,
-                       $month_ext $order";
 
-        $limit = isset($args['lastn']) ? $args['lastn'] : -1;
-        $offset = isset($args['offset']) ? $args['offset'] : -1;
-        $results = $mt->db()->SelectLimit($sql, $limit, $offset);
+        $bind = [];
+        $sql  = implode(
+            ' ', [
+                "select count(*) as entry_count, $year_ext as y, $month_ext as m from mt_entry",
+                'where entry_blog_id = ' . $mt->db()->ph('entry_blog_id', $bind, $args['blog_id']),
+                "and entry_status = 2 and entry_class = 'entry'",
+                "group by $year_ext, $month_ext order by $year_ext $order, $month_ext $order"
+            ]);
+
+        $limit   = isset($args['lastn'])  ? $args['lastn']  : -1;
+        $offset  = isset($args['offset']) ? $args['offset'] : -1;
+        $results = $mt->db()->SelectLimit($sql, $limit, $offset, $bind);
 
         if (empty($results))
             return; 
 
-        $temp_hash;
+        $temp_hash = array();
         foreach ($results->GetArray() as $row) {
             $date = sprintf("%04d%02d01000000", $row[1], $row[2]);
             list($start) = start_end_fiscal_year($date);
             $y = intval(substr($start, 0, 4));
-            $temp_hash[$y]++;
+            if (isset($temp_hash[$y])) {
+                $temp_hash[$y] += $row[0];
+            } else {
+                $temp_hash[$y] = $row[0];
+            }
         }
         $rows;
         foreach ($temp_hash as $key=>$val) {
@@ -176,50 +172,51 @@ class ContentTypeFiscalYearlyArchiver extends ContentTypeDateBasedArchiver {
     }
 
     protected function get_archive_list_data($args) {
-        $mt = MT::get_instance();
-        $ctx =& $mt->context();
+        $mt   = MT::get_instance();
+        $ctx  = &$mt->context();
+        $mtdb = $mt->db();
 
-        $blog_id = $args['blog_id'];
-        $at = $args['archive_type'];
-        $order = $args['sort_order'] == 'ascend' ? 'asc' : 'desc';
+        $bind = [];
+        list($join_on, $cols) = $this->get_join_on($args['archive_type'], $args['blog_id'], $bind);
+        $dt_target_col = $cols['dt'];
+        $cond          = [];
+        $cond[]        = 'cd_blog_id = ' . $mtdb->ph('cd_blog_id', $bind, $args['blog_id']);
+        $cond[]        = 'cd_status = 2';
 
-        $content_type_filter = _get_content_type_filter($args);
+        $order = !empty($args['sort_order']) && $args['sort_order'] == 'ascend' ? 'asc' : 'desc';
 
-        list($dt_target_col, $cat_target_col, $join_on) = _get_join_on($ctx, $at, $blog_id);
+        if ($content_type_filter = _get_content_type_filter($args, $bind)) {
+            $cond[] = $content_type_filter;
+        }
 
-        $year_ext = $mt->db()->apply_extract_date('year', $dt_target_col);
+        $year_ext  = $mt->db()->apply_extract_date('year',  $dt_target_col);
         $month_ext = $mt->db()->apply_extract_date('month', $dt_target_col);
 
-        $sql = "
-                select count(*) as cd_count,
-                       $year_ext as y,
-                       $month_ext as m
-                  from mt_cd
-                  $join_on
-                 where cd_blog_id = $blog_id
-                   and cd_status = 2
-                   $date_filter
-                   $content_type_filter
-                 group by
-                       $year_ext,
-                       $month_ext
-                 order by
-                       $year_ext $order,
-                       $month_ext $order";
+        $sql = implode(
+            ' ', [
+                "select count(*) as cd_count, $year_ext as y, $month_ext as m from mt_cd",
+                $join_on,
+                'where ' . implode(' and ', $cond),
+                "group by $year_ext, $month_ext order by $year_ext $order, $month_ext $order",
+            ]);
 
-        $limit = isset($args['lastn']) ? $args['lastn'] : -1;
-        $offset = isset($args['offset']) ? $args['offset'] : -1;
-        $results = $mt->db()->SelectLimit($sql, $limit, $offset);
+        $limit   = isset($args['lastn'])  ? $args['lastn']  : -1;
+        $offset  = isset($args['offset']) ? $args['offset'] : -1;
+        $results = $mtdb->SelectLimit($sql, $limit, $offset, $bind);
 
         if (empty($results))
             return; 
 
-        $temp_hash;
+        $temp_hash = array();
         foreach ($results->GetArray() as $row) {
             $date = sprintf("%04d%02d01000000", $row[1], $row[2]);
             list($start) = start_end_fiscal_year($date);
             $y = intval(substr($start, 0, 4));
-            $temp_hash[$y]++;
+            if (isset($temp_hash[$y])) {
+                $temp_hash[$y] += $row[0];
+            } else {
+                $temp_hash[$y] = $row[0];
+            }
         }
         $rows;
         foreach ($temp_hash as $key=>$val) {
@@ -265,6 +262,6 @@ function require_l10n() {
     if (strtolower($lang) == 'en-us' || strtolower($lang) == 'en_us') {
         $lang = 'en';
     }
-    require_once("l10n_$lang.php");
+    require_once(__DIR__. DIRECTORY_SEPARATOR. "l10n_$lang.php");
 }
 ?>
