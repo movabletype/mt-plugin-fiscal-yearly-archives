@@ -94,12 +94,22 @@ sub archive_title {
     require MT::Template::Context;
     my $year = MT::Template::Context::_hdlr_date( $ctx,
         { ts => $start, 'format' => "%Y" } );
-    my $lang = lc MT->current_language || 'en_us';
-    $lang = 'ja' if lc($lang) eq 'jp';
 
-    sprintf( "%s%s%s",
-        ( $lang ne 'ja' ? 'FY' : '' ),
-        $year, ( $lang eq 'ja' ? '&#24180;&#24230;' : '' ) );
+    my $plugin = MT->component("FiscalYearlyArchives");
+    my $blog   = $ctx->stash('blog');
+    my $current_lang;
+    if ($blog) {
+        $current_lang = MT->current_language;
+        MT->set_language($blog->language);
+    }
+    my $al = $plugin->translate('FISCAL_YEARLY_ARCHIVE_TITLE', $year);
+    if ('CODE' eq ref($al)) {
+        $al = $al->();
+    }
+    if ($blog) {
+        MT->set_language($current_lang);
+    }
+    return $al;
 }
 
 sub date_range {

@@ -13,8 +13,9 @@ use vars qw( @ISA %Lexicon );
 @ISA = qw( MT::L10N );
 
 %Lexicon = (
-    'FISCAL-YEARLY_ADV' => 'Ficcal Yearly',
-    'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'ContentType Ficcal Yearly',
+    'FISCAL-YEARLY_ADV' => 'Fiscal Yearly',
+    'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'ContentType Fiscal Yearly',
+    'FISCAL_YEARLY_ARCHIVE_TITLE' => 'FY[_1]',
 );
 
 1;

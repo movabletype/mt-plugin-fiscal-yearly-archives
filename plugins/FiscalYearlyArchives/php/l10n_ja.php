@@ -9,6 +9,7 @@ global $Lexicon_ja;
 $Lexicon_ja = array(
     'FISCAL-YEARLY_ADV' => '年度別',
     'CONTENTTYPE-FISCAL-YEARLY_ADV' => 'コンテンツタイプ 年度別',
+    'FISCAL_YEARLY_ARCHIVE_TITLE' => '[_1]年度',
 );
 
 ?>

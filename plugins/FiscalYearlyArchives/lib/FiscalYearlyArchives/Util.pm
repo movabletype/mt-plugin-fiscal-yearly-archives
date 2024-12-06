@@ -11,6 +11,7 @@ use warnings;
 use utf8;
 use base 'Exporter';
 use Time::Local;
+use MT::Util qw( days_in );
 
 our @EXPORT_OK = qw( start_end_fiscal_year );
 
@@ -30,11 +31,16 @@ sub start_end_fiscal_year {
     return $start unless wantarray;
 
     my $timelocal = timelocal( 0, 0, 0, 1, $starting_month - 1, $y - 1900 );
-    my $endofyear = $timelocal + 365 * 24 * 3600;
+    my $endofyear = $timelocal + (is_leap_year($y) || is_leap_year($y + 1) ? 366 : 365) * 24 * 3600;
     my ( $day, $month, $year ) = ( localtime($endofyear) )[ 3 .. 5 ];
-    my $end = sprintf "%04d%02d%02d235959", $year + 1900, $month + 1, $day;
+    my $end = sprintf "%04d%02d%02d235959", $year + 1900, $month, days_in($month, $year + 1900);
 
     ( $start, $end );
+}
+
+sub is_leap_year {
+    # Copied from MT::Util
+    (!($_[0] % 4) && ($_[0] % 100)) || !($_[0] % 400);
 }
 
 1;
